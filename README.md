@@ -5,15 +5,18 @@ PyTorch implementation of "StegoGAN: Leveraging Steganography for Non-bijective 
 Author: Sidi Wu, Yizi Chen, Loic Landrieu, Nicolas Gonthier, Samuel Mermet, Lorenz Hurni, Konrad Schindler
 
 ## Abstract
-Image translation models traditionally postulate the existence of a unique correspondence between the semantic classes of the source and target domains. However, this assumption does not always hold in real-world scenarios due to divergent distributions, different class sets, and asymmetrical information representation. %This is particularly prevalent for abstract representations such as maps or labelled images.
-As conventional GANs attempt to generate images matching the distribution of the target domain, they may hallucinate spurious instances of classes absent from the source domain, thereby diminishing their interpretability and reliability. 
-CycleGAN-based methods are also known to hide information in the generated images to bypass cycle-consistency objectives, a process known as steganography.
-In response to these challenges, we introduce StegoGAN, a novel model that leverages steganography to prevent spurious features in generated images. Our approach enhances the semantic consistency of the translated images without requiring additional feature detection, inpainting steps, or supervision. 
+Most image-to-image translation models postulate bijective mapping --- a unique correspondence exists between the semantic classes of the source and target domains. However, this assumption does not always hold in real-world scenarios due to divergent distributions, different class sets, and asymmetrical information representation. 
+As conventional GANs attempt to generate images matching the distribution of the target domain, they may hallucinate spurious instances of classes absent from the source domain, thereby diminishing the interpretability and reliability of translated images. 
+CycleGAN-based methods are also known to hide the mismatched information in the generated images to bypass cycle consistency objectives, a process known as steganography.
+In response to the challenge of non-bijective image translation, we introduce StegoGAN, a novel model that leverages steganography to prevent spurious features in generated images. Our approach enhances the semantic consistency of the translated images without requiring additional postprocessing or supervision. 
 Our experimental evaluations demonstrate that StegoGAN outperforms existing GAN-based models across various non-bijective image-to-image translation tasks, both qualitatively and quantitatively.
 
 <img src="img/problem.png" width="500"/>
 
-So, we propose such pipline to solve the problem:
+So, we propose StegoGAN, 
+- a model that, instead of disabling steganography, leverages this phenomenon to detect and mitigate semantic misalignment between domains; 
+- In settings where the domain mapping is non-bijective, StegoGAN experimentally demonstrates superior semantic consistency over other GAN-based models both visually and quantitatively, without requiring detection or inpainting steps;
+- We publish three datasets from open-access sources as a benchmark for evaluating non-bijective image translation models.
 
 <img src="img/pipline.png" width="800"/>
 
