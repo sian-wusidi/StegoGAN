@@ -15,7 +15,7 @@ Our experimental evaluations demonstrate that StegoGAN outperforms existing GAN-
 
 So, we propose such pipline to solve the problem:
 
-<img src="img/pipeline.png" width="800"/>
+<img src="img/pipline.png" width="800"/>
 
 If you find this code useful in your research, please consider to cite:
 
