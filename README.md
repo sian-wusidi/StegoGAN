@@ -108,6 +108,7 @@ Inferencing results will be saved at `results/<model_name>/test_latest`.
 ## Acknowledgement
 We appreciate the open source code from:  
 * Public code of [Cycle-GAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) (for base architecture)
+```
 @inproceedings{zhu2017unpaired,
   title={Unpaired image-to-image translation using cycle-consistent adversarial networks},
   author={Zhu, Jun-Yan and Park, Taesung and Isola, Phillip and Efros, Alexei A},
@@ -115,8 +116,10 @@ We appreciate the open source code from:
   pages={2223--2232},
   year={2017}
 }
+```
 
 * Public code of [RANSAC-FLOW](https://github.com/XiSHEN0220/RANSAC-Flow) (for mask generation)
+```
 @inproceedings{shen2020ransac,
   title={Ransac-flow: generic two-stage image alignment},
   author={Shen, Xi and Darmon, Fran{\c{c}}ois and Efros, Alexei A and Aubry, Mathieu},
@@ -125,3 +128,4 @@ We appreciate the open source code from:
   year={2020},
   organization={Springer}
 }
+```
