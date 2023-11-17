@@ -14,7 +14,7 @@ Our experimental evaluations demonstrate that StegoGAN outperforms existing GAN-
 <img src="img/problem.png" width="500"/>
 
 So, we propose StegoGAN, 
-- a model that, instead of disabling steganography, leverages this phenomenon to detect and mitigate semantic misalignment between domains; 
+- A model that, instead of disabling steganography, leverages this phenomenon to detect and mitigate semantic misalignment between domains; 
 - In settings where the domain mapping is non-bijective, StegoGAN experimentally demonstrates superior semantic consistency over other GAN-based models both visually and quantitatively, without requiring detection or inpainting steps;
 - We publish three datasets from open-access sources as a benchmark for evaluating non-bijective image translation models.
 
@@ -118,17 +118,5 @@ We appreciate the open source code from:
   booktitle={Proceedings of the IEEE international conference on computer vision},
   pages={2223--2232},
   year={2017}
-}
-```
-
-* Public code of [RANSAC-FLOW](https://github.com/XiSHEN0220/RANSAC-Flow) (for mask generation)
-```
-@inproceedings{shen2020ransac,
-  title={Ransac-flow: generic two-stage image alignment},
-  author={Shen, Xi and Darmon, Fran{\c{c}}ois and Efros, Alexei A and Aubry, Mathieu},
-  booktitle={Computer Vision--ECCV 2020: 16th European Conference, Glasgow, UK, August 23--28, 2020, Proceedings, Part IV 16},
-  pages={618--637},
-  year={2020},
-  organization={Springer}
 }
 ```
