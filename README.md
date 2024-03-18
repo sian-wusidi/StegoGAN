@@ -34,14 +34,13 @@ Structure of this repository:
 |
 ├── data                         <- Data loader
 ├── dataset                      <- Dataset for training
-├── img                          <- Images
-│   ├── brats                    <- Brats dataset
-│   ├── IGN                      <- IGN dataset
-|   ├── google                   <- Google dataset
+│   ├── BRATS_mismatch           <- Brats_mismatch dataset
+│   ├── PlanIGN                  <- PlanIGN dataset
+|   ├── Google_mismatch          <- Google_mismatch dataset
 ├── model                        <- Model
 │   ├── base_model.py            <- Base model
 │   ├── Networks.py              <- Networks
-|   ├── stego_gan_model.py       <- Stego gan model
+|   ├── stego_gan_model.py       <- StegoGAN model
 ├── env_stego_gan.yml            <- Conda environment .yml file
 ├── train.py                     <- Training codes for Stego-GAN
 ├── test.py                      <- Testing codes for Stego-GAN
@@ -61,8 +60,8 @@ conda activate env_stego_gan
 
 We propose three datasets for benchmarking non-bijective image-to-image translation, and the datasets can be downloaded from Zenodo (To be relased...):
 
-* [PlanIGN] This dataset was constructed from the French National Mapping Agency (IGN), comprising 1900 aerial images (ortho-imagery) at 3m spatial resolution  and two versions of their corresponding maps -- one with toponyms and one without toponyms (_TU). We divide them into training (1000 images) and testing (900 images). In our experiment, we use trainA & trainB, testA & testB_TU for training and testing, respectively.
-* [Google_mismatch] We created non-bijective datasets from the [map dataset](https://github.com/phillipi/pix2pix?tab=readme-ov-file) by seperating the samples with highways from those without. We excluded all satellite images featuring highways (trainA) and subsampled maps with varying proportions of highways (trainB) from 0% to 65%. For the test set, we selected 898 pairs without highways. 
+* [PlanIGN] This dataset was constructed from the French National Mapping Agency (IGN), comprising 1900 aerial images (ortho-imagery) at 3m spatial resolution and two versions of their corresponding maps -- one with toponyms and one without toponyms (_TU). We divided them into training (1000 images) and testing (900 images). In our experiment, we use trainA & trainB, testA & testB_TU for training and testing, respectively.
+* [Google_mismatch] We created non-bijective datasets from the [map dataset](https://github.com/phillipi/pix2pix?tab=readme-ov-file) by seperating the samples with highways from those without. We excluded all satellite images (trainA) featuring highways and subsampled maps (trainB) with varying proportions of highways from 0% to 65%. For the test set, we selected 898 pairs without highways. 
 * [BRATS_mismatch] We used two modalities from [Brats2018](https://www.med.upenn.edu/sbia/brats2018/data.html) -- T1 and FLAIR. We selected transverse slices from the 60&deg to 100&deg. Each scan was classified as tumorous if more than 1% of its pixels were labelled as such and as healthy if it contained no tumor pixels. We provide "generate_mismatched_datasets.py" so users can generate datasets with varying proportions of tumorous samples during training. In our default seeting, we have 800 training samples with source images (T1) being healthy and target images (FLAIR) comprising 60% tumorous scans. The test set contains 335 paired scans of healthy brains. 
 
 And it should be placed within the 'dataset/' directory.
