@@ -63,9 +63,9 @@ And it should be placed within the 'dataset/' directory.
 ### 3. Download weights for inference or pre-training
 
 The pre-train weights could be download from:
+* [Google_mismatch] The checkpoints with varing proportions of highways can be downloaded [here](https://drive.google.com/file/d/11sesOtokRomVvM2rHRcv2nSWT4_nONGR/view?usp=sharing). 
+* [PlanIGN] Both checkpoints for best image translation results and mismatch detection (texts) can be downloaded [here](https://drive.google.com/file/d/1ZDwGFpJh1ZAEeGTK-S3UDRyDYFwiWTLo/view?usp=sharing).
 * [BRATS](To be relased...)
-* [IGN](To be relased...)
-* [google](To be relased...)
 
 ## How to use 🚀
 
