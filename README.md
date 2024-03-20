@@ -187,4 +187,4 @@ If you want to use Brats_mismatch, please also cite the following papers:
 
 
 ## Acknowledgement
-We appreciate the open source code from [Cycle-GAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) (for base architecture).
+We appreciate the open source code from [Cycle-GAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) for base architecture.
