@@ -47,8 +47,9 @@ class stegoganmodel(BaseModel):
             parser.add_argument('--lambda_consistency', type=float, default=3)
             parser.add_argument('--lambda_identity', type=float, default=0.5, help='use identity mapping. Setting lambda_identity other than 0 has an effect of scaling the weight of the identity mapping loss. For example, if the weight of the identity loss should be 10 times smaller than the weight of the reconstruction loss, please set lambda_identity = 0.1')
 
-        parser.add_argument('--netG_A', type=str, default='resnet_9blocks_maskv1_fuse', help='specify generator architecture [resnet_9blocks | resnet_6blocks | unet_256 | unet_128]')
+        parser.add_argument('--netG_A', type=str, default='resnet_9blocks_maskv1', help='specify generator architecture [resnet_9blocks | resnet_6blocks | unet_256 | unet_128]')
         parser.add_argument('--netG_B', type=str, default='resnet_9blocks_maskv3', help='specify generator architecture [resnet_9blocks | resnet_6blocks | unet_256 | unet_128]')
+        parser.add_argument('--fusionblock', action='store_true', help='Extra blocks to fuse features')
         parser.add_argument('--mask_group', type=int, default=256, help='number of mask groups')
         parser.add_argument('--mask_detach', type=bool, default=False, help='if mask should be detached in training')
         return parser
@@ -75,15 +76,15 @@ class stegoganmodel(BaseModel):
             self.model_names = ['G_A', 'G_B', 'D_A', 'D_B']
         else:  # during test time, only load Gs
             self.model_names = ['G_A', 'G_B']
-        print('the generator is:', opt.netG, 'the discriminator is:', opt.netD)
+        print('the generator is:', opt.netG_A, opt.netG_B,  'the discriminator is:', opt.netD)
 
         # define networks (both Generators and discriminators)
         # The naming is different from those used in the paper.
         # Code (vs. paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)
         self.netG_A = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, opt.netG_A, opt.norm,
-                                        not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids, resnet_layer=opt.resnet_layer) # add one channel as uncertainty
+                                        not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids, resnet_layer=opt.resnet_layer, fusionblock=opt.fusionblock) # add one channel as uncertainty
         self.netG_B = networks.define_G(opt.output_nc, opt.input_nc, opt.ngf, opt.netG_B, opt.norm,
-                                        not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids, out_dim=opt.mask_group, resnet_layer=opt.resnet_layer)
+                                        not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids, out_dim=opt.mask_group, resnet_layer=opt.resnet_layer, fusionblock=opt.fusionblock)
         if self.isTrain:  # define discriminators
             self.netD_A = networks.define_D(opt.output_nc, opt.ndf, opt.netD,
                                             opt.n_layers_D, opt.norm, opt.init_type, opt.init_gain, self.gpu_ids)

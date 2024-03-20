@@ -61,7 +61,7 @@ conda activate env_stego_gan
 We propose three datasets for benchmarking non-bijective image-to-image translation, and the datasets can be downloaded from Zenodo (To be relased...):
 
 * [PlanIGN] This dataset was constructed from the French National Mapping Agency (IGN), comprising 1900 aerial images (ortho-imagery) at 3m spatial resolution and two versions of their corresponding maps -- one with toponyms and one without toponyms (_TU). We divided them into training (1000 images) and testing (900 images). In our experiment, we use trainA & trainB, testA & testB_TU for training and testing, respectively.
-* [Google_mismatch] We created non-bijective datasets from the [map dataset](https://github.com/phillipi/pix2pix?tab=readme-ov-file) by seperating the samples with highways from those without. We excluded all satellite images (trainA) featuring highways and subsampled maps (trainB) with varying proportions of highways from 0% to 65%. For the test set, we selected 898 pairs without highways. 
+* [Google_mismatch] We created non-bijective datasets from the [maps dataset](https://github.com/phillipi/pix2pix?tab=readme-ov-file) by seperating the samples with highways from those without. We excluded all satellite images (trainA) featuring highways and subsampled maps (trainB) with varying proportions of highways from 0% to 65%. For the test set, we selected 898 pairs without highways. 
 * [BRATS_mismatch] We used two modalities from [Brats2018](https://www.med.upenn.edu/sbia/brats2018/data.html) -- T1 and FLAIR. We selected transverse slices from the 60&deg to 100&deg. Each scan was classified as tumorous if more than 1% of its pixels were labelled as such and as healthy if it contained no tumor pixels. We provide "generate_mismatched_datasets.py" so users can generate datasets with varying proportions of tumorous samples during training. In our default seeting, we have 800 training samples with source images (T1) being healthy and target images (FLAIR) comprising 60% tumorous scans. The test set contains 335 paired scans of healthy brains. 
 
 And it should be placed within the 'dataset/' directory.
@@ -77,16 +77,16 @@ The pre-train weights could be download from:
 
 ### 1. Train models
 
-* For example: training Stego-GAN with Brats dataset (training with pre-trained)
+* For example: training Stego-GAN with Google_mismatch dataset
 ```
-python train.py --dataroot dataset/brats/0.6 \
-                --name brats_stego_0.6 \
+python train.py --dataroot dataset/Google_mismatch/0.65 \
+                --name google_stego_0.65 \
                 --model stego_gan \
                 --gpu_ids 0 \
                 --lambda_reg 0.3 \
                 --lambda_consistency 1 \ 
-                --resnet_layer 9 \
-                --batch_size 12  \
+                --resnet_layer 8 \
+                --batch_size 1  \
                 --no_flip \
                 --n_epochs 100
 ```
@@ -94,14 +94,46 @@ Training results and weights are saved at `checkpoints/<name>`.
 
 ### 2. Testing models
 ```
-python test.py --dataroot dataset/brats/0.6 \ 
-               --name brats_stego_0.6 \ 
+python test.py --dataroot dataset/Google_mismatch \ 
+               --name google_stego_0.65 \ 
                --model stego_gan \
                --phase test \
                --no_dropout \
-               --resnet_layer 9
+               --resnet_layer 8
 ```
 Inferencing results will be saved at `results/<model_name>/test_latest`.
+
+### 2. Evaluating results
+For Google_mismatch
+```
+python evaluation/evaluate_google.py \
+       --gt_path ./results/google_stego_0.65/test_latest/images/real_B \
+       --pred_path ./results/google_stego_0.65/test_latest/images/fake_B_clean \
+       --output_path ./results/google_stego_0.65/test_latest \
+       --dataset Google \
+       --method StegoGAN
+```
+For PlanIGN
+```
+python evaluation/evaluate_IGN.py \
+       --gt_path_TU dataset/PlanIGN/testB_TU \ 
+       --gt_path_T dataset/PlanIGN/testB \
+       --pred_path ./results/PlanIGN/test_latest/images/fake_B_clean \
+       --pred_path_mask ./results/PlanIGN/test_latest/images/latent_real_B_mask_upsampled \
+       --output_path ./results/PlanIGN/test_latest \
+       --dataset PlanIGN \
+       --method StegoGAN 
+```
+For Brats_mismatch
+```
+python evaluation/evaluate_brats.py \
+       --gt_path ./results/Brats/test_latest/images/real_B \
+       --pred_path ./results/Brats/test_latest/images/fake_B_clean \
+       --output_path ./results/Brats/test_latest \
+       --seg_save_path ./results/Brats/test_latest/images/fake_B_tumor \
+       --dataset Brats \
+       --method StegoGAN
+```
 
 ## Qualitative results 🥰
 

@@ -131,7 +131,7 @@ def init_net(net, init_type='normal', init_gain=0.02, gpu_ids=[]):
     return net
 
 
-def define_G(input_nc, output_nc, ngf, netG, norm='batch', use_dropout=False, init_type='normal', init_gain=0.02, gpu_ids=[], out_dim=256, resnet_layer=1):
+def define_G(input_nc, output_nc, ngf, netG, norm='batch', use_dropout=False, init_type='normal', init_gain=0.02, gpu_ids=[], out_dim=256, resnet_layer=1, fusionblock=False):
     """Create a generator
 
     Parameters:
@@ -158,8 +158,8 @@ def define_G(input_nc, output_nc, ngf, netG, norm='batch', use_dropout=False, in
     net = None
     norm_layer = get_norm_layer(norm_type=norm)
 
-    if netG == 'resnet_9blocks_maskv1_fuse':
-        net = ResnetMaskV1Generator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=9, resnet_layer=resnet_layer)
+    if netG == 'resnet_9blocks_maskv1':
+        net = ResnetMaskV1Generator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=9, resnet_layer=resnet_layer, fusionblock=fusionblock)
     elif netG == 'resnet_9blocks_maskv3':
         net = ResnetMaskV3Generator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=9, out_dim=out_dim, resnet_layer=resnet_layer)
     else:
@@ -320,7 +320,7 @@ def cal_gradient_penalty(netD, real_data, fake_data, device, type='mixed', const
 
 
 class ResnetMaskV1Generator(nn.Module):
-    def __init__(self, input_nc, output_nc, ngf=64, norm_layer=nn.BatchNorm2d, use_dropout=False, n_blocks=6, padding_type='reflect', resnet_layer=1):
+    def __init__(self, input_nc, output_nc, ngf=64, norm_layer=nn.BatchNorm2d, use_dropout=False, n_blocks=6, padding_type='reflect', resnet_layer=1, fusionblock=False):
         self.resnet_layer = resnet_layer
 
         print('***********************************************')
@@ -335,30 +335,29 @@ class ResnetMaskV1Generator(nn.Module):
         else:
             use_bias = norm_layer == nn.InstanceNorm2d
 
-        self.conv1 = nn.Sequential(*[nn.ReflectionPad2d(3),
+        model = [nn.ReflectionPad2d(3),
                                     nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0, bias=use_bias),
                                     norm_layer(ngf),
-                                    nn.ReLU(True)])
+                                    nn.ReLU(True)]
 
-        model = []
         n_downsampling = 2
         for i in range(n_downsampling):  # add downsampling layers
             mult = 2 ** i
             model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1, bias=use_bias),
                       norm_layer(ngf * mult * 2),
                       nn.ReLU(True)]
-        self.conv2 = nn.Sequential(*model)
+        self.conv1 = nn.Sequential(*model)
 
         model = []
         mult = 2 ** n_downsampling
-        for i in range(n_blocks):       # add ResNet blocks
+        for i in range(self.resnet_layer+1):       # add ResNet blocks
             model += [ResnetBlock(ngf * mult, padding_type=padding_type, norm_layer=norm_layer, use_dropout=use_dropout, use_bias=use_bias)]
-            
-        if self.resnet_layer == 0 or self.resnet_layer == 9:
-            self.conv3 = nn.Sequential(*model)
-        else:
-            self.conv3_up = nn.Sequential(*model[:self.resnet_layer])
-            self.conv3_down = nn.Sequential(*model[self.resnet_layer:])
+        self.conv2 = nn.Sequential(*model)
+
+        model = []
+        for i in range(self.resnet_layer+1, self.n_blocks):       # add ResNet blocks
+            model += [ResnetBlock(ngf * mult, padding_type=padding_type, norm_layer=norm_layer, use_dropout=use_dropout, use_bias=use_bias)]
+        self.conv3 = nn.Sequential(*model) 
 
         model = []
         for i in range(n_downsampling):  # add upsampling layers
@@ -374,10 +373,12 @@ class ResnetMaskV1Generator(nn.Module):
         model += [nn.Tanh()]
         self.decoder = nn.Sequential(*model)
 
-        fusion_blocks =[]
-        for i in range(1):       # add ResNet blocks
-            fusion_blocks += [ResnetBlock(ngf * (2 ** n_downsampling), padding_type=padding_type, norm_layer=norm_layer, use_dropout=use_dropout, use_bias=use_bias)]
-        self.fusion = nn.Sequential(*fusion_blocks)
+        self.fusion_block = fusionblock
+        if self.fusion_block:
+            fusion_blocks =[]
+            for i in range(1):       # add ResNet blocks
+                fusion_blocks += [ResnetBlock(ngf * (2 ** n_downsampling), padding_type=padding_type, norm_layer=norm_layer, use_dropout=use_dropout, use_bias=use_bias)]
+            self.fusion = nn.Sequential(*fusion_blocks)
     
     def forward(self, input, extrafeature=None):
         # Case:
@@ -388,31 +389,23 @@ class ResnetMaskV1Generator(nn.Module):
         # ---------x ---------------- 1
         # ------------------x---------2
         # And so on...
-
-        if extrafeature is None:
-            if self.resnet_layer == 0 or self.resnet_layer == 9:
-                output = self.conv3((self.conv2(self.conv1(input))))
-            else:
-                output = self.conv3_down(self.conv3_up((self.conv2(self.conv1(input)))))
+        output = self.conv1(input) # Initialize output as the first feature map
+        if extrafeature != None and self.fusion_block:
+            extrafeature = self.fusion(extrafeature)  
+        # Conditional addition of 'extrafeature' to intermediate feature maps
+        if self.resnet_layer == -1: # Before resnet block
+            if extrafeature != None:
+                output = output + extrafeature
+            output = self.conv3(output)
+        elif self.resnet_layer == 8: # After resnet block
+            output = self.conv2(output)
+            if extrafeature != None:
+                output = output + extrafeature
         else:
-            # Fuse the 'extrafeature' before adding it to the feature maps
-            extrafeature = self.fusion(extrafeature)
-
-            if self.resnet_layer == 0:
-                feats = [self.conv1(input), self.conv2, self.conv3]
-                output = feats[1](feats[0])
+            output = self.conv2(output)
+            if extrafeature != None:
                 output = output + extrafeature
-                output = feats[2](output)
-            elif self.resnet_layer == 9:
-                feats = [self.conv1(input), self.conv2, self.conv3]
-                output = feats[2](feats[1](feats[0]))
-                output = output + extrafeature
-            else:
-                # Apply convolution layers
-                feats = [self.conv1(input), self.conv2, self.conv3_up, self.conv3_down]
-                output = feats[1](feats[0])
-                output = feats[2](output) + extrafeature
-                output = feats[3](output)
+            output = self.conv3(output)
 
         # Pass the final feature map to the decoder
         output = self.decoder(output)
@@ -435,31 +428,29 @@ class ResnetMaskV3Generator(nn.Module):
         else:
             use_bias = norm_layer == nn.InstanceNorm2d
 
-        self.conv1 = nn.Sequential(*[nn.ReflectionPad2d(3),
+        model = [nn.ReflectionPad2d(3),
                                     nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0, bias=use_bias),
                                     norm_layer(ngf),
-                                    nn.ReLU(True)])
+                                    nn.ReLU(True)]
 
-        model = []
         n_downsampling = 2
         for i in range(n_downsampling):  # add downsampling layers
             mult = 2 ** i
             model += [nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=1, bias=use_bias),
                       norm_layer(ngf * mult * 2),
                       nn.ReLU(True)]
-        self.conv2 = nn.Sequential(*model)
+        self.conv1 = nn.Sequential(*model)
         
-        mult = 2 ** n_downsampling
         model = []
-        # self.resnet_layer
-        for i in range(n_blocks):       # add ResNet blocks
+        mult = 2 ** n_downsampling
+        for i in range(self.resnet_layer+1):       # add ResNet blocks
             model += [ResnetBlock(ngf * mult, padding_type=padding_type, norm_layer=norm_layer, use_dropout=use_dropout, use_bias=use_bias)]
+        self.conv2 = nn.Sequential(*model)
 
-        if self.resnet_layer == 0 or self.resnet_layer == 9:
-            self.conv3 = nn.Sequential(*model)
-        else:
-            self.conv3_up = nn.Sequential(*model[:self.resnet_layer])
-            self.conv3_down = nn.Sequential(*model[self.resnet_layer:])
+        model = []
+        for i in range(self.resnet_layer+1, self.n_blocks):       # add ResNet blocks
+            model += [ResnetBlock(ngf * mult, padding_type=padding_type, norm_layer=norm_layer, use_dropout=use_dropout, use_bias=use_bias)]
+        self.conv3 = nn.Sequential(*model)     
 
         self.out_dim = out_dim
         self.mask = NetMatchability(input_dim=input_dim, out_dim=out_dim)
@@ -487,33 +478,32 @@ class ResnetMaskV3Generator(nn.Module):
         # ---------x ---------------- 1
         # ------------------x---------2
         # And so on...
-        if self.resnet_layer == 0:
-            feats = [self.conv1(input), self.conv2, self.conv3]
-            output = feats[1](feats[0])
+
+        # Apply convolution layers
+        output = self.conv1(input) # Initialize output as the first feature map
+        # Conditional addition of 'extrafeature' to intermediate feature maps
+        if self.resnet_layer == -1: # Before resnet block
             output, features_discarded, reverse_mask_sum = mask_generate(output, self.mask)
-            output = feats[2](output)
-        elif self.resnet_layer == 9:
-            feats = [self.conv1(input), self.conv2, self.conv3]
-            output = feats[2](feats[1](feats[0]))
+            output = self.conv3(output)
+        elif self.resnet_layer == 8: # After resnet block
+            output = self.conv2(output)
             output, features_discarded, reverse_mask_sum = mask_generate(output, self.mask)
         else:
-            # Apply convolution layers
-            feats = [self.conv1(input), self.conv2, self.conv3_up, self.conv3_down]
-            output = feats[2](feats[1](feats[0]))
+            output = self.conv2(output)
             output, features_discarded, reverse_mask_sum = mask_generate(output, self.mask)
-            output = feats[3](output)
-            
+            output = self.conv3(output)
+        
         # Pass the final feature map to the decoder
         output = self.decoder(output)
         return output, features_discarded, reverse_mask_sum
 
 # Mask generation function
-def mask_generate(output, mask):
-    latentmask = mask(output)
-    output = output * latentmask
+def mask_generate(latentfeature, mask):
+    latentmask = mask(latentfeature)
+    output = latentfeature * latentmask
     reverse_mask = 1 - latentmask # the mismatched feature that should be discarded
     reverse_mask_sum = torch.unsqueeze(torch.max(reverse_mask, axis = 1)[0], dim = 1)
-    features_discarded = output * reverse_mask
+    features_discarded = latentfeature * reverse_mask
     return output, features_discarded, reverse_mask_sum
 
 
