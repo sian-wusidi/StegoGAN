@@ -148,7 +148,7 @@ If you use our code or our datasets, please cite our [paper](http:..)
 }
 ```
 
-If you want to use Google_mismatch, please also cite the following paper:
+If you want to use the Google_mismatch dataset, please also cite the following paper:
 ```
 @inproceedings{isola2017image,
   title={Image-to-Image Translation with Conditional Adversarial Networks},
@@ -157,7 +157,7 @@ If you want to use Google_mismatch, please also cite the following paper:
   year={2017}
 }
 ```
-If you want to use Brats_mismatch, please also cite the following papers:
+If you want to use the Brats_mismatch dataset, please also cite the following papers:
 ```
 @article{menze2014multimodal,
   title={The multimodal brain tumor image segmentation benchmark (BRATS)},
