@@ -1,6 +1,6 @@
 # Official code for StegoGAN: Leveraging Steganography for Non-bijective Image-to-Image Translation
 
-PyTorch implementation of "StegoGAN: Leveraging Steganography for Non-bijective Image-to-Image Translation".
+PyTorch implementation of "StegoGAN: Leveraging Steganography for Non-bijective Image-to-Image Translation". This paper was accepted by [CVPR](https://cvpr.thecvf.com/) 2024. 
 
 Author: Sidi Wu, Yizi Chen, Samuel Mermet, Lorenz Hurni, Konrad Schindler, Nicolas Gonthier, Loic Landrieu
 
@@ -19,12 +19,6 @@ So, we propose StegoGAN,
 - We publish three datasets from open-access sources as a benchmark for evaluating non-bijective image translation models.
 
 <img src="img/pipline.png" width="800"/>
-
-If you find this code useful in your research, please consider to cite:
-
-```
-After ARXIV
-```
 
 ### Project Structure
 
