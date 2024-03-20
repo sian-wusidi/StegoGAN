@@ -2,7 +2,7 @@
 
 PyTorch implementation of "StegoGAN: Leveraging Steganography for Non-bijective Image-to-Image Translation".
 
-Author: Sidi Wu, Yizi Chen, Loic Landrieu, Nicolas Gonthier, Samuel Mermet, Lorenz Hurni, Konrad Schindler
+Author: Sidi Wu, Yizi Chen, Samuel Mermet, Lorenz Hurni, Konrad Schindler, Nicolas Gonthier, Loic Landrieu
 
 ## Abstract
 Most image-to-image translation models postulate bijective mapping --- a unique correspondence exists between the semantic classes of the source and target domains. However, this assumption does not always hold in real-world scenarios due to divergent distributions, different class sets, and asymmetrical information representation. 
@@ -77,9 +77,9 @@ The pre-train weights could be download from:
 
 ### 1. Train models
 
-* For example: training Stego-GAN with Google_mismatch dataset
+* For example: training StegoGAN with Google_mismatch dataset
 ```
-python train.py --dataroot dataset/Google_mismatch/0.65 \
+python train.py --dataroot ./dataset/Google_mismatch/0.65 \
                 --name google_stego_0.65 \
                 --model stego_gan \
                 --gpu_ids 0 \
@@ -94,7 +94,7 @@ Training results and weights are saved at `checkpoints/<name>`.
 
 ### 2. Testing models
 ```
-python test.py --dataroot dataset/Google_mismatch \ 
+python test.py --dataroot ./dataset/Google_mismatch \ 
                --name google_stego_0.65 \ 
                --model stego_gan \
                --phase test \
@@ -116,8 +116,8 @@ python evaluation/evaluate_google.py \
 For PlanIGN
 ```
 python evaluation/evaluate_IGN.py \
-       --gt_path_TU dataset/PlanIGN/testB_TU \ 
-       --gt_path_T dataset/PlanIGN/testB \
+       --gt_path_TU ./dataset/PlanIGN/testB_TU \ 
+       --gt_path_T ./dataset/PlanIGN/testB \
        --pred_path ./results/PlanIGN/test_latest/images/fake_B_clean \
        --pred_path_mask ./results/PlanIGN/test_latest/images/latent_real_B_mask_upsampled \
        --output_path ./results/PlanIGN/test_latest \
@@ -139,15 +139,52 @@ python evaluation/evaluate_brats.py \
 
 <img src="img/results.png" width="800"/>
 
-## Acknowledgement
-We appreciate the open source code from:  
-* Public code of [Cycle-GAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) (for base architecture)
+## Citation
+If you use our code or our datasets, please cite our [paper](http:..)
 ```
-@inproceedings{zhu2017unpaired,
-  title={Unpaired image-to-image translation using cycle-consistent adversarial networks},
-  author={Zhu, Jun-Yan and Park, Taesung and Isola, Phillip and Efros, Alexei A},
-  booktitle={Proceedings of the IEEE international conference on computer vision},
-  pages={2223--2232},
+@inproceedings{...,
+  title={StegoGAN: Leveraging Steganography for Non-Bijective Image-to-Image Translation},
+  ...
+}
+```
+
+If you want to use Google_mismatch and Brats_mismatch dataset, please also cite the following papers:
+```
+@inproceedings{isola2017image,
+  title={Image-to-Image Translation with Conditional Adversarial Networks},
+  author={Isola, Phillip and Zhu, Jun-Yan and Zhou, Tinghui and Efros, Alexei A},
+  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
   year={2017}
 }
 ```
+```
+@article{menze2014multimodal,
+  title={The multimodal brain tumor image segmentation benchmark (BRATS)},
+  author={Menze, Bjoern H and Jakab, Andras and Bauer, Stefan and Kalpathy-Cramer, Jayashree and Farahani, Keyvan and Kirby, Justin and Burren, Yuliya and Porz, Nicole and Slotboom, Johannes and Wiest, Roland and others},
+  journal={IEEE transactions on medical imaging},
+  volume={34},
+  number={10},
+  pages={1993--2024},
+  year={2014}
+}
+@article{bakas2017brats17,
+  title={Advancing the cancer genome atlas glioma MRI collections with expert segmentation labels and radiomic features},
+  author={Bakas, Spyridon and Akbari, Hamed and Sotiras, Aristeidis and Bilello, Michel and Rozycki, Martin and Kirby, Justin S and Freymann, John B and Farahani, Keyvan and Davatzikos, Christos},
+  journal={Scientific data},
+  volume={4},
+  number={1},
+  pages={1--13},
+  year={2017}
+}
+@article{bakas2018ibrats17,
+  title={Identifying the best machine learning algorithms for brain tumor segmentation, progression assessment, and overall survival prediction in the BRATS challenge},
+  author={Bakas, Spyridon and Reyes, Mauricio and Jakab, Andras and Bauer, Stefan and Rempfler, Markus and Crimi, Alessandro and Shinohara, Russell Takeshi and Berger, Christoph and Ha, Sung Min and Rozycki, Martin and others},
+  journal={arXiv preprint arXiv:1811.02629},
+  year={2018}
+}
+```
+
+
+## Acknowledgement
+We appreciate the open source code from:  
+* Public code of [Cycle-GAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) (for base architecture).
