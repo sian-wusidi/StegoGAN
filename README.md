@@ -54,7 +54,7 @@ conda activate env_stego_gan
 
 ### 2. Download datasets
 
-We propose three datasets for benchmarking non-bijective image-to-image translation, and the datasets can be downloaded from Zenodo and placed within the 'dataset/' directory.:
+We propose three datasets for benchmarking non-bijective image-to-image translation, and the datasets can be downloaded from [Zenodo](https://zenodo.org/records/10839841) and placed within the 'dataset/' directory.:
 
 * [**PlanIGN**] This dataset contains 1900 aerial images (ortho-imagery from IGN) at 3m spatial resolution and two associated maps: one with toponyms and one without toponyms (_TU). We divided them into training (1000 images) and testing (900 images). In our experiment, we use trainA & trainB, testA & testB_TU for training and testing, respectively.
 * [**Google_mismatch**] We created non-bijective datasets from the [maps dataset](https://github.com/phillipi/pix2pix?tab=readme-ov-file) by seperating the samples with highways from those without. We excluded all satellite images (trainA) featuring highways and subsampled maps (trainB) with varying proportions of highways from 0% to 65%. For the test set, we selected 898 pairs without highways. 
