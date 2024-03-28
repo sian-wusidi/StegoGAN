@@ -1,24 +1,26 @@
-# Official code for StegoGAN: Leveraging Steganography for Non-bijective Image-to-Image Translation
+<h4 align="center">
+  PyTorch implementation for
+</h4>
+  
+<h3 align="center">
+StegoGAN: Leveraging Steganography for Non-bijective Image-to-Image Translation - <a href="https://cvpr.thecvf.com/">CVPR2024</a>
+</h3>
+<h4 align="center">
+Sidi Wu, Yizi Chen, Samuel Mermet, Lorenz Hurni, Konrad Schindler, Nicolas Gonthier, Loic Landrieu
+</h4>
 
-PyTorch implementation of "StegoGAN: Leveraging Steganography for Non-bijective Image-to-Image Translation". This paper was accepted by [CVPR](https://cvpr.thecvf.com/) 2024. 
-
-Author: Sidi Wu, Yizi Chen, Samuel Mermet, Lorenz Hurni, Konrad Schindler, Nicolas Gonthier, Loic Landrieu
-
-## Abstract
-Most image-to-image translation models postulate bijective mapping --- a unique correspondence exists between the semantic classes of the source and target domains. However, this assumption does not always hold in real-world scenarios due to divergent distributions, different class sets, and asymmetrical information representation. 
-As conventional GANs attempt to generate images matching the distribution of the target domain, they may hallucinate spurious instances of classes absent from the source domain, thereby diminishing the interpretability and reliability of translated images. 
-CycleGAN-based methods are also known to hide the mismatched information in the generated images to bypass cycle consistency objectives, a process known as steganography.
-In response to the challenge of non-bijective image translation, we introduce StegoGAN, a novel model that leverages steganography to prevent spurious features in generated images. Our approach enhances the semantic consistency of the translated images without requiring additional postprocessing or supervision. 
-Our experimental evaluations demonstrate that StegoGAN outperforms existing GAN-based models across various non-bijective image-to-image translation tasks, both qualitatively and quantitatively.
-
+<p align="center">
 <img src="img/problem.png" width="500"/>
+</p>
 
-So, we propose StegoGAN, 
-- A model that, instead of disabling steganography, leverages this phenomenon to detect and mitigate semantic misalignment between domains; 
-- In settings where the domain mapping is non-bijective, StegoGAN experimentally demonstrates superior semantic consistency over other GAN-based models both visually and quantitatively, without requiring detection or inpainting steps;
-- We publish three datasets from open-access sources as a benchmark for evaluating non-bijective image translation models.
+We introduce StegoGAN:
+- A model that use steganography to detect and mitigate semantic misalignment between domains; 
+- In settings where the domain mapping is non-bijective (some classes are only in the target domain), StegoGAN achieves superior semantic consistency over other GAN-based models without requiring detection or inpainting steps;
+- We propose three datasets from open-access sources as a benchmark for evaluating non-bijective image translation models.
 
+<p align="center">
 <img src="img/pipline.png" width="800"/>
+</p>
 
 ### Project Structure
 
@@ -52,24 +54,22 @@ conda activate env_stego_gan
 
 ### 2. Download datasets
 
-We propose three datasets for benchmarking non-bijective image-to-image translation, and the datasets can be downloaded from Zenodo (To be relased...):
+We propose three datasets for benchmarking non-bijective image-to-image translation, and the datasets can be downloaded from Zenodo and placed within the 'dataset/' directory.:
 
-* [PlanIGN] This dataset was constructed from the French National Mapping Agency (IGN), comprising 1900 aerial images (ortho-imagery) at 3m spatial resolution and two versions of their corresponding maps -- one with toponyms and one without toponyms (_TU). We divided them into training (1000 images) and testing (900 images). In our experiment, we use trainA & trainB, testA & testB_TU for training and testing, respectively.
-* [Google_mismatch] We created non-bijective datasets from the [maps dataset](https://github.com/phillipi/pix2pix?tab=readme-ov-file) by seperating the samples with highways from those without. We excluded all satellite images (trainA) featuring highways and subsampled maps (trainB) with varying proportions of highways from 0% to 65%. For the test set, we selected 898 pairs without highways. 
-* [BRATS_mismatch] We used two modalities from [Brats2018](https://www.med.upenn.edu/sbia/brats2018/data.html) -- T1 and FLAIR. We selected transverse slices from the 60&deg to 100&deg. Each scan was classified as tumorous if more than 1% of its pixels were labelled as such and as healthy if it contained no tumor pixels. We provide "generate_mismatched_datasets.py" so users can generate datasets with varying proportions of tumorous samples during training. In our default seeting, we have 800 training samples with source images (T1) being healthy and target images (FLAIR) comprising 60% tumorous scans. The test set contains 335 paired scans of healthy brains. 
-
-And it should be placed within the 'dataset/' directory.
+* [**PlanIGN**] This dataset contains 1900 aerial images (ortho-imagery from IGN) at 3m spatial resolution and two associated maps: one with toponyms and one without toponyms (_TU). We divided them into training (1000 images) and testing (900 images). In our experiment, we use trainA & trainB, testA & testB_TU for training and testing, respectively.
+* [**Google_mismatch**] We created non-bijective datasets from the [maps dataset](https://github.com/phillipi/pix2pix?tab=readme-ov-file) by seperating the samples with highways from those without. We excluded all satellite images (trainA) featuring highways and subsampled maps (trainB) with varying proportions of highways from 0% to 65%. For the test set, we selected 898 pairs without highways. 
+* [**BRATS_mismatch**] We used two modalities of brain MRI from [Brats2018](https://www.med.upenn.edu/sbia/brats2018/data.html) -- T1 and FLAIR. Each scan is classified as tumorous if more than 1% of its pixels were labelled as such and as healthy if it contains no tumor pixels. We provide "generate_mismatched_datasets.py" so users can generate datasets with varying proportions of tumorous samples during training. In our default setting, we have 800 training samples with source images (T1) being healthy and target images (FLAIR) comprising 60% tumorous scans. The test set contains 335 paired scans of healthy brains. 
 
 ### 3. Download weights for inference or pre-training
 
-The pre-trained weights could be download from:
-* [Google_mismatch] The checkpoints with varing proportions of highways can be downloaded [here](https://drive.google.com/file/d/11sesOtokRomVvM2rHRcv2nSWT4_nONGR/view?usp=sharing). 
-* [PlanIGN] Both checkpoints for best image translation results and mismatch detection (texts) can be downloaded [here](https://drive.google.com/file/d/1ZDwGFpJh1ZAEeGTK-S3UDRyDYFwiWTLo/view?usp=sharing).
-* [BRATS] To be relased...
+The pre-trained weights can be downloaded from:
+* [**Google_mismatch**] The checkpoints with varing proportions of highways can be downloaded [here](https://drive.google.com/file/d/11sesOtokRomVvM2rHRcv2nSWT4_nONGR/view?usp=sharing). 
+* [**PlanIGN**] Both checkpoints for best image translation results and mismatch detection (texts) can be downloaded [here](https://drive.google.com/file/d/1ZDwGFpJh1ZAEeGTK-S3UDRyDYFwiWTLo/view?usp=sharing).
+* [**BRATS**] To be relased...
 
-## How to use 🚀
+## Trainin and Inference 🚀
 
-### 1. Train models
+### 1. Training
 
 * For example: training StegoGAN with Google_mismatch dataset
 ```
@@ -86,7 +86,7 @@ python train.py --dataroot ./dataset/Google_mismatch/0.65 \
 ```
 Training results and weights are saved at `checkpoints/<name>`.
 
-### 2. Testing models
+### 2. Inference
 ```
 python test.py --dataroot ./dataset/Google_mismatch \ 
                --name google_stego_0.65 \ 
@@ -131,14 +131,19 @@ python evaluation/evaluate_brats.py \
 
 ## Qualitative results 🥰
 
+<p align="center">
 <img src="img/results.png" width="800"/>
+<\p>
 
 ## Citation
 If you use our code or our datasets, please cite our [paper](http:..)
 ```
-@inproceedings{...,
-  title={StegoGAN: Leveraging Steganography for Non-Bijective Image-to-Image Translation},
-  ...
+@inproceedings{isola2017image,
+  title={{StegoGAN: L}everaging Steganography
+for Non-Bijective Image-to-Image Translation},
+  author={Wu, Sidi and Chenn Yizi and Mermet, Samuel and Hurni, Lorenz and Schindler, Konrad and Gonthier, Nicolas and Landrieu, Loic},
+  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2024}
 }
 ```
 
@@ -181,4 +186,4 @@ If you want to use the Brats_mismatch dataset, please also cite the following pa
 
 
 ## Acknowledgement
-We appreciate the open source code from [Cycle-GAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) for base architecture.
+We are thankful for the great open-source code of [Cycle-GAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
