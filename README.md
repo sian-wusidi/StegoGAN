@@ -65,7 +65,7 @@ We propose three datasets for benchmarking non-bijective image-to-image translat
 The pre-trained weights can be downloaded from:
 * [**Google_mismatch**] The checkpoints with varing proportions of highways can be downloaded [here](https://drive.google.com/file/d/11sesOtokRomVvM2rHRcv2nSWT4_nONGR/view?usp=sharing). 
 * [**PlanIGN**] Both checkpoints for best image translation results and mismatch detection (texts) can be downloaded [here](https://drive.google.com/file/d/1ZDwGFpJh1ZAEeGTK-S3UDRyDYFwiWTLo/view?usp=sharing).
-* [**BRATS**] To be relased...
+* [**BRATS_mismatch**] To be relased...
 
 ## Trainin and Inference 🚀
 
@@ -138,7 +138,7 @@ python evaluation/evaluate_brats.py \
 ## Citation
 If you use our code or our datasets, please cite our [paper](http:..)
 ```
-@inproceedings{isola2017image,
+@inproceedings{wu2024stegogan,
   title={{StegoGAN: L}everaging Steganography
 for Non-Bijective Image-to-Image Translation},
   author={Wu, Sidi and Chenn Yizi and Mermet, Samuel and Hurni, Lorenz and Schindler, Konrad and Gonthier, Nicolas and Landrieu, Loic},
