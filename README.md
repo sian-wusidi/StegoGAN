@@ -3,7 +3,7 @@
 </h4>
   
 <h3 align="center">
-StegoGAN: Leveraging Steganography for Non-bijective Image-to-Image Translation - <a href="https://cvpr.thecvf.com/">CVPR2024</a>
+StegoGAN: Leveraging Steganography for <br> Non-bijective Image-to-Image Translation - <a href="https://cvpr.thecvf.com/">CVPR2024</a>
 </h3>
 <h4 align="center">
 Sidi Wu, Yizi Chen, Samuel Mermet, Lorenz Hurni, Konrad Schindler, Nicolas Gonthier, Loic Landrieu
