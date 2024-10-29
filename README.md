@@ -85,6 +85,7 @@ python train.py --dataroot ./dataset/Google_mismatch/0.65 \
                 --n_epochs 200
 ```
 For PlanIGN
+```
 python train.py --dataroot ./dataset/PlanIGN \
                 --name planIGN_stego \
                 --model stego_gan \
