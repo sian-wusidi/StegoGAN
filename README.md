@@ -81,9 +81,22 @@ python train.py --dataroot ./dataset/Google_mismatch/0.65 \
                 --lambda_consistency 1 \ 
                 --resnet_layer 8 \
                 --batch_size 1  \
-                --no_flip \
-                --n_epochs 100
+                --fusionblock \
+                --n_epochs 200
 ```
+For PlanIGN
+python train.py --dataroot ./dataset/PlanIGN \
+                --name planIGN_stego \
+                --model stego_gan \
+                --gpu_ids 0 \
+                --lambda_reg 0.25 \
+                --lambda_consistency 1 \ 
+                --resnet_layer 8 \
+                --batch_size 1  \
+                --fusionblock \
+                --load_size 256 \
+                --n_epochs 200
+```                
 Training results and weights are saved at `checkpoints/<name>`.
 
 ### 2. Inference
