@@ -151,7 +151,7 @@ python evaluation/evaluate_brats.py \
 <\p>
 
 ## Citation
-If you use our code or our datasets, please cite our [paper](http:..)
+If you use our code or our datasets, please cite our [paper](https://openaccess.thecvf.com/content/CVPR2024/papers/Wu_StegoGAN_Leveraging_Steganography_for_Non-Bijective_Image-to-Image_Translation_CVPR_2024_paper.pdf)
 ```
 @inproceedings{wu2024stegogan,
   title={{StegoGAN: L}everaging Steganography
