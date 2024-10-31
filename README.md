@@ -204,5 +204,5 @@ If you want to use the Brats_mismatch dataset, please also cite the following pa
 We are thankful for the great open-source code of [Cycle-GAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
 
 ## Changelog
-### 2023.10.28 ###
-Update the training configurations for training Google_mismatch and PlanIGN. Thanks to the reminder of @guyleaf.
+### 2025.10.28 ###
+Update the configurations for training Google_mismatch and PlanIGN. Thanks to the reminder of @guyleaf.
