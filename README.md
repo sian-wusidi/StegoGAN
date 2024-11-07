@@ -83,7 +83,7 @@ python train.py --dataroot ./dataset/Google_mismatch/0.65 \
                 --resnet_layer 8 \
                 --batch_size 1  \
                 --fusionblock \
-                --n_epochs 200
+                --n_epochs 100
 ```
 For PlanIGN
 ```
@@ -97,7 +97,7 @@ python train.py --dataroot ./dataset/PlanIGN \
                 --batch_size 1  \
                 --fusionblock \
                 --load_size 256 \
-                --n_epochs 200
+                --n_epochs 100
 ```                
 Training results and weights are saved at `checkpoints/<name>`.
 
