@@ -512,11 +512,10 @@ class NetMatchability(nn.Module):
         super(NetMatchability, self).__init__()
         self.conv1 =  nn.Conv2d(input_dim, input_dim, kernel_size = 3, stride = 1, padding = 1)
         self.norm1 = nn.InstanceNorm2d(input_dim, eps=1e-05)
-        self.relu_0 = nn.ReLU()
+        self.relu =  nn.ReLU()
         
         self.conv2 =  nn.Conv2d(input_dim, input_dim, kernel_size = 3, stride = 1, padding = 1)
         self.norm2 = nn.InstanceNorm2d(input_dim, eps=1e-05)
-        self.relu_1 = nn.ReLU()
 
         self.conv3 =  nn.Conv2d(input_dim, out_dim, kernel_size = 3, stride = 1, padding = 1)
         self.sigmoid = nn.Sigmoid()
@@ -534,11 +533,11 @@ class NetMatchability(nn.Module):
     def forward(self, feat):
         x = self.conv1(feat)
         x = self.norm1(x)
-        x = self.relu_0(x)
+        x = self.relu(x)
         
         x = self.conv2(x)
         x = self.norm2(x)
-        x = self.relu_1(x)
+        x = self.relu(x)
 
         x = self.conv3(x)
         x = self.sigmoid(x)
